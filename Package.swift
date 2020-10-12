@@ -14,5 +14,6 @@ let package = Package(
     dependencies: [],
     targets: [
         .target(name: "UpdateInfoPresenter", dependencies: []),
+        .testTarget(name: "UpdateInfoPresenterTests", dependencies: ["UpdateInfoPresenter"]),
     ]
 )

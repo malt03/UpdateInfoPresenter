@@ -7,6 +7,15 @@
 
 import Foundation
 
-public protocol Version {
+public protocol Version: Comparable {
     init(bundleVersion: String)
+}
+
+extension Int: Version {
+    public init(bundleVersion: String) {
+        guard let value = Int(bundleVersion) else {
+            fatalError("failed to convert bundleVersion \(bundleVersion)!")
+        }
+        self = value
+    }
 }
