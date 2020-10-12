@@ -11,7 +11,11 @@ import UpdateInfoPresenter
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-        UpdateInfoPresenter.configure(targetVersion: 1, presentOption: [.newUser], viewController: UIStoryboard(name: "Main", bundle: .main).instantiateViewController(withIdentifier: "UpdateInfo"))
+        UpdateInfoPresenter.configure(
+            targetVersion: 1,
+            presentOption: [.newUser, .skippedUser],
+            viewController: UIStoryboard(name: "Main", bundle: .main).instantiateViewController(withIdentifier: "UpdateInfo")
+        )
         return true
     }
 

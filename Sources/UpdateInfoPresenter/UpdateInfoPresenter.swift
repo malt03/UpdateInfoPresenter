@@ -7,11 +7,7 @@
 
 import UIKit
 
-private var holder: Any?
-
 public final class UpdateInfoPresenter {
-    private var window: UIWindow?
-    
     public struct PresentOption: OptionSet {
         public let rawValue: Int
         public init(rawValue: Int) {
@@ -36,6 +32,15 @@ public final class UpdateInfoPresenter {
         presentOption: PresentOption,
         viewController: @escaping @autoclosure () -> UIViewController
     ) {
+        let previousVersionValue = UserDefaults.standard.string(forKey: Keys.version)
+        let currentVersionValue = Bundle.main.object(forInfoDictionaryKey: "CFBundleVersion") as! String
+        UserDefaults.standard.setValue(currentVersionValue, forKey: Keys.version)
+        
+        let previousVersion = previousVersionValue.map { VersionType(bundleVersion: $0) }
+        let currentVersion = VersionType(bundleVersion: currentVersionValue)
+        
+        if !presentOption.needsPresent(target: targetVersion, previous: previousVersion, current: currentVersion) { return }
+        
         
         if #available(iOS 13.0, *) {
             NotificationCenter.default.addObserver(
@@ -56,6 +61,10 @@ public final class UpdateInfoPresenter {
         self.viewController = viewController
     }
     
+    public static func dismiss() {
+        window = nil
+    }
+    
     private static var viewController: (() -> UIViewController)?
     private static var window: UIWindow?
     
@@ -68,10 +77,11 @@ public final class UpdateInfoPresenter {
     }
     
     @objc static private func windowDidBecomeKey() {
-        presentUpdateInfo(on: UIWindow())
+        presentUpdateInfo(on: UIWindow(frame: UIScreen.main.bounds))
     }
     
     private static func presentUpdateInfo(on window: UIWindow) {
+        NotificationCenter.default.removeObserver(self)
         guard let viewController = viewController else { return }
         window.rootViewController = viewController()
         window.makeKeyAndVisible()

@@ -27,7 +27,7 @@
         <!--Main-->
         <scene sceneID="i5v-QW-KX7">
             <objects>
-                <viewController id="zcJ-bW-BJ1" customClass="ViewController" customModule="Example" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="zcJ-bW-BJ1" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="DFr-Yd-dhi">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -40,10 +40,10 @@
             </objects>
             <point key="canvasLocation" x="400" y="195"/>
         </scene>
-        <!--View Controller-->
+        <!--Update Info View Controller-->
         <scene sceneID="YWd-f2-Ex7">
             <objects>
-                <viewController storyboardIdentifier="UpdateInfo" id="J8U-zc-Jhn" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="UpdateInfo" id="J8U-zc-Jhn" customClass="UpdateInfoViewController" customModule="Example" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="miV-Hq-K31">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
