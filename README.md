@@ -3,6 +3,10 @@
 UpdateInfoPresenter is a library that allows you to properly present the specified UIViewController to users who have updated the version of your app.
 
 ## Usage
+
+### Configure
+If you implement the following code, the specified viewController will be displayed when the app is launched, if necessary.
+
 ```swift
 func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
     UpdateInfoPresenter.configure(
@@ -12,6 +16,13 @@ func application(_ application: UIApplication, didFinishLaunchingWithOptions lau
     )
     return true
 }
+```
+
+### Dismiss
+UpdateInfoPresenter creates a special window and displays a viewController on it.  
+To dismiss it, call the following method.
+```swift
+UpdateInfoPresenter.dismiss()
 ```
 
 ## Conditional Branching with presentingOption
