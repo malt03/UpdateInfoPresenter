@@ -14,8 +14,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         UpdateInfoPresenter.configure(
             targetVersion: 1,
             presentingOption: [.newUser, .skippedUser],
-            viewController: UIStoryboard(name: "Main", bundle: .main).instantiateViewController(withIdentifier: "UpdateInfo"),
-            forcePresent: true
+            viewController: UIStoryboard(name: "Main", bundle: .main).instantiateViewController(withIdentifier: "UpdateInfo")
         )
         return true
     }
