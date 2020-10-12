@@ -8,15 +8,15 @@
 import UIKit
 
 public final class UpdateInfoPresenter {
-    public struct PresentOption: OptionSet {
+    public struct PresentingOption: OptionSet {
         public let rawValue: Int
         public init(rawValue: Int) {
             self.rawValue = rawValue
         }
         
-        public static let empty = PresentOption([])
-        public static let newUser = PresentOption(rawValue: 1 << 0)
-        public static let skippedUser = PresentOption(rawValue: 1 << 1)
+        public static let empty = PresentingOption([])
+        public static let newUser = PresentingOption(rawValue: 1 << 0)
+        public static let skippedUser = PresentingOption(rawValue: 1 << 1)
         
         fileprivate func needsPresent<VersionType: Version>(target: VersionType, previous: VersionType?, current: VersionType) -> Bool {
             if current < target { return false }
@@ -29,7 +29,7 @@ public final class UpdateInfoPresenter {
     
     public static func configure<VersionType: Version>(
         targetVersion: VersionType,
-        presentOption: PresentOption,
+        presentingOption: PresentingOption,
         viewController: @escaping @autoclosure () -> UIViewController
     ) {
         let previousVersionValue = UserDefaults.standard.string(forKey: Keys.version)
@@ -39,7 +39,7 @@ public final class UpdateInfoPresenter {
         let previousVersion = previousVersionValue.map { VersionType(bundleVersion: $0) }
         let currentVersion = VersionType(bundleVersion: currentVersionValue)
         
-        if !presentOption.needsPresent(target: targetVersion, previous: previousVersion, current: currentVersion) { return }
+        if !presentingOption.needsPresent(target: targetVersion, previous: previousVersion, current: currentVersion) { return }
         
         
         if #available(iOS 13.0, *) {
