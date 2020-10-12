@@ -30,7 +30,8 @@ public final class UpdateInfoPresenter {
     public static func configure<VersionType: Version>(
         targetVersion: VersionType,
         presentingOption: PresentingOption,
-        viewController: @escaping @autoclosure () -> UIViewController
+        viewController: @escaping @autoclosure () -> UIViewController,
+        forcePresent: Bool = false
     ) {
         let previousVersionValue = UserDefaults.standard.string(forKey: Keys.version)
         let currentVersionValue = Bundle.main.object(forInfoDictionaryKey: "CFBundleVersion") as! String
@@ -39,23 +40,29 @@ public final class UpdateInfoPresenter {
         let previousVersion = previousVersionValue.map { VersionType(bundleVersion: $0) }
         let currentVersion = VersionType(bundleVersion: currentVersionValue)
         
-        if !presentingOption.needsPresent(target: targetVersion, previous: previousVersion, current: currentVersion) { return }
+        if !forcePresent && !presentingOption.needsPresent(target: targetVersion, previous: previousVersion, current: currentVersion) { return }
         
-        
-        if #available(iOS 13.0, *) {
-            NotificationCenter.default.addObserver(
-                self,
-                selector: #selector(sceneDidActivate),
-                name: UIScene.didActivateNotification,
-                object: nil
-            )
-        } else {
+        func addObserverForWindowDidBocmeKey() {
             NotificationCenter.default.addObserver(
                 self,
                 selector: #selector(windowDidBecomeKey),
                 name: UIWindow.didBecomeKeyNotification,
                 object: nil
             )
+        }
+        if #available(iOS 13.0, *) {
+            if Bundle.main.object(forInfoDictionaryKey: "UIApplicationSceneManifest") != nil {
+                NotificationCenter.default.addObserver(
+                    self,
+                    selector: #selector(sceneDidActivate),
+                    name: UIScene.didActivateNotification,
+                    object: nil
+                )
+            } else {
+                addObserverForWindowDidBocmeKey()
+            }
+        } else {
+            addObserverForWindowDidBocmeKey()
         }
         
         self.viewController = viewController
