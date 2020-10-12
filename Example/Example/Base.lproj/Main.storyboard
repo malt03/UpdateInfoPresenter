@@ -64,7 +64,7 @@
                             </label>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="4a7-qS-TNi"/>
-                        <color key="backgroundColor" systemColor="secondarySystemFillColor"/>
+                        <color key="backgroundColor" red="0.0" green="0.0" blue="0.0" alpha="0.5" colorSpace="custom" customColorSpace="calibratedRGB"/>
                         <constraints>
                             <constraint firstItem="ndt-3S-RrR" firstAttribute="centerX" secondItem="miV-Hq-K31" secondAttribute="centerX" id="24y-N8-DDC"/>
                             <constraint firstItem="iuE-mE-zZG" firstAttribute="centerX" secondItem="miV-Hq-K31" secondAttribute="centerX" id="Vqj-cU-Nax"/>
@@ -79,9 +79,6 @@
         </scene>
     </scenes>
     <resources>
-        <systemColor name="secondarySystemFillColor">
-            <color red="0.47058823529411764" green="0.47058823529411764" blue="0.50196078431372548" alpha="0.16" colorSpace="custom" customColorSpace="sRGB"/>
-        </systemColor>
         <systemColor name="systemBackgroundColor">
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
         </systemColor>

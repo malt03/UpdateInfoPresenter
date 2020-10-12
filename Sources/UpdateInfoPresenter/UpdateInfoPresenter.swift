@@ -34,44 +34,47 @@ public final class UpdateInfoPresenter {
     public static func configure<VersionType: Version>(
         targetVersion: VersionType,
         presentOption: PresentOption,
-        viewController: @autoclosure () -> UIViewController
+        viewController: @escaping @autoclosure () -> UIViewController
     ) {
-        NotificationCenter.default.addObserver(
-            self,
-            selector: #selector(didBecomeVisibleNotification),
-            name: UIWindow.didBecomeVisibleNotification,
-            object: nil
-        )
-        NotificationCenter.default.addObserver(
-            self,
-            selector: #selector(didBecomeKeyNotification),
-            name: UIWindow.didBecomeKeyNotification,
-            object: nil
-        )
         
-        let previousVersionValue = UserDefaults.standard.string(forKey: Keys.version)
-        let currentVersionValue = Bundle.main.object(forInfoDictionaryKey: "CFBundleVersion") as! String
-        UserDefaults.standard.setValue(currentVersionValue, forKey: Keys.version)
+        if #available(iOS 13.0, *) {
+            NotificationCenter.default.addObserver(
+                self,
+                selector: #selector(sceneDidActivate),
+                name: UIScene.didActivateNotification,
+                object: nil
+            )
+        } else {
+            NotificationCenter.default.addObserver(
+                self,
+                selector: #selector(windowDidBecomeKey),
+                name: UIWindow.didBecomeKeyNotification,
+                object: nil
+            )
+        }
         
-        let previousVersion = previousVersionValue.map { VersionType(bundleVersion: $0) }
-        let currentVersion = VersionType(bundleVersion: currentVersionValue)
-        
-        if !presentOption.needsPresent(target: targetVersion, previous: previousVersion, current: currentVersion) { return }
-        
-        let window = UIWindow()
-        window.backgroundColor = .red
-        window.rootViewController = viewController()
-        self.window = window
+        self.viewController = viewController
     }
     
+    private static var viewController: (() -> UIViewController)?
     private static var window: UIWindow?
     
-    @objc static private func didBecomeVisibleNotification() {
-        print("didBecomeVisibleNotification")
+    @available(iOS 13.0, *)
+    @objc static private func sceneDidActivate() {
+        guard let scene = UIApplication.shared.connectedScenes
+                .compactMap({ $0 as? UIWindowScene })
+                .first(where: { $0.activationState == .foregroundActive }) else { return }
+        presentUpdateInfo(on: UIWindow(windowScene: scene))
     }
     
-    @objc static private func didBecomeKeyNotification() {
-        print(window)
-        window?.makeKeyAndVisible()
+    @objc static private func windowDidBecomeKey() {
+        presentUpdateInfo(on: UIWindow())
+    }
+    
+    private static func presentUpdateInfo(on window: UIWindow) {
+        guard let viewController = viewController else { return }
+        window.rootViewController = viewController()
+        window.makeKeyAndVisible()
+        self.window = window
     }
 }
