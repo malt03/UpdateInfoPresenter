@@ -4,17 +4,18 @@ UpdateInfoPresenter is a library that allows you to properly present the specifi
 
 ## Usage
 
-### Configure
-If you implement the following code, the specified viewController will be displayed when the app is launched, if necessary.
+### Present
+If you implement the following code, the specified viewController will be displayed when the app is launched, if necessary.  
+If you pass nil to the viewController argument, UpdateInfoPresenter will not present anything, but it will check and save the version.  
+The saved version will be used the next time you pass a value other than nil to the viewController.
 
 ```swift
-func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-    UpdateInfoPresenter.configure(
-        targetVersion: 3,
-        presentingOption: [.newUser, .skippedUser],
-        viewController: UIStoryboard(name: "UpdateInfo", bundle: .main).instantiateInitialViewController()!
+func sceneDidBecomeActive(_ scene: UIScene) {
+    UpdateInfoPresenter.presentIfNeeded(
+        viewController: UIStoryboard(name: "Main", bundle: .main).instantiateViewController(withIdentifier: "UpdateInfo"),
+        targetVersion: 1,
+        presentingOption: [.newUser, .skippedUser]
     )
-    return true
 }
 ```
 

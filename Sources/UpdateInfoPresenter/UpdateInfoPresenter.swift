@@ -27,10 +27,10 @@ public final class UpdateInfoPresenter {
         }
     }
     
-    public static func configure<VersionType: Version>(
+    public static func presentIfNeeded<VersionType: Version>(
+        viewController: @autoclosure () -> UIViewController?,
         targetVersion: VersionType,
         presentingOption: PresentingOption,
-        viewController: @escaping @autoclosure () -> UIViewController,
         forcePresent: Bool = false
     ) {
         let previousVersionValue = UserDefaults.standard.string(forKey: Keys.version)
@@ -41,57 +41,31 @@ public final class UpdateInfoPresenter {
         let currentVersion = VersionType(bundleVersion: currentVersionValue)
         
         if !forcePresent && !presentingOption.needsPresent(target: targetVersion, previous: previousVersion, current: currentVersion) { return }
-        
-        func addObserverForWindowDidBocmeKey() {
-            NotificationCenter.default.addObserver(
-                self,
-                selector: #selector(windowDidBecomeKey),
-                name: UIWindow.didBecomeKeyNotification,
-                object: nil
-            )
-        }
+        guard let viewController = viewController() else { return }
+
+        let window: UIWindow
         if #available(iOS 13.0, *) {
-            if Bundle.main.object(forInfoDictionaryKey: "UIApplicationSceneManifest") != nil {
-                NotificationCenter.default.addObserver(
-                    self,
-                    selector: #selector(sceneDidActivate),
-                    name: UIScene.didActivateNotification,
-                    object: nil
-                )
+            if
+                let scene = UIApplication.shared.connectedScenes
+                    .compactMap({ $0 as? UIWindowScene })
+                    .first(where: { $0.activationState == .foregroundActive })
+            {
+                window = UIWindow(windowScene: scene)
             } else {
-                addObserverForWindowDidBocmeKey()
+                window = UIWindow(frame: UIScreen.main.bounds)
             }
         } else {
-            addObserverForWindowDidBocmeKey()
+            window = UIWindow(frame: UIScreen.main.bounds)
         }
         
-        self.viewController = viewController
+        window.rootViewController = viewController
+        window.makeKeyAndVisible()
+        self.window = window
     }
     
     public static func dismiss() {
         window = nil
     }
     
-    private static var viewController: (() -> UIViewController)?
     private static var window: UIWindow?
-    
-    @available(iOS 13.0, *)
-    @objc static private func sceneDidActivate() {
-        guard let scene = UIApplication.shared.connectedScenes
-                .compactMap({ $0 as? UIWindowScene })
-                .first(where: { $0.activationState == .foregroundActive }) else { return }
-        presentUpdateInfo(on: UIWindow(windowScene: scene))
-    }
-    
-    @objc static private func windowDidBecomeKey() {
-        presentUpdateInfo(on: UIWindow(frame: UIScreen.main.bounds))
-    }
-    
-    private static func presentUpdateInfo(on window: UIWindow) {
-        NotificationCenter.default.removeObserver(self)
-        guard let viewController = viewController else { return }
-        window.rootViewController = viewController()
-        window.makeKeyAndVisible()
-        self.window = window
-    }
 }
